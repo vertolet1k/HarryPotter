@@ -4,8 +4,8 @@
  */
 package com.harrypotter.dao;
 
-import com.harrypotter.HibernateUtil;
-import com.harrypotter.entity.Supply;
+import main.HibernateUtil;
+import com.harrypotter.entity.Wand;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -14,41 +14,41 @@ import java.util.List;
  *
  * @author vika
  */
-public class SupplyDAO {
-    public void save(Supply supply) {
+public class WandDAO {
+    public void save(Wand wand) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        session.save(supply);
+        session.save(wand);
         tx.commit();
         session.close();
     }
 
-    public void update(Supply supply) {
+    public void update(Wand wand) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        session.update(supply);
+        session.update(wand);
         tx.commit();
         session.close();
     }
 
-    public void delete(Supply supply) {
+    public void delete(Wand wand) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        session.delete(supply);
+        session.delete(wand);
         tx.commit();
         session.close();
     }
 
-    public Supply findById(Long id) {
+    public Wand findById(Long id) {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Supply supply = session.get(Supply.class, id);
+        Wand wand = session.get(Wand.class, id);
         session.close();
-        return supply;
+        return wand;
     }
 
-    public List<Supply> findAll() {
+    public List<Wand> findAll() {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        List<Supply> list = session.createQuery("from Supply", Supply.class).list();
+        List<Wand> list = session.createQuery("from Wand", Wand.class).list();
         session.close();
         return list;
     }

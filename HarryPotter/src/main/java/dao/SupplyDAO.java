@@ -4,8 +4,8 @@
  */
 package com.harrypotter.dao;
 
-import com.harrypotter.HibernateUtil;
-import com.harrypotter.entity.Customer;
+import main.HibernateUtil;
+import com.harrypotter.entity.Supply;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -14,41 +14,41 @@ import java.util.List;
  *
  * @author vika
  */
-public class CustomerDAO {
-    public void save(Customer customer) {
+public class SupplyDAO {
+    public void save(Supply supply) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        session.save(customer);
+        session.save(supply);
         tx.commit();
         session.close();
     }
 
-    public void update(Customer customer) {
+    public void update(Supply supply) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        session.update(customer);
+        session.update(supply);
         tx.commit();
         session.close();
     }
 
-    public void delete(Customer customer) {
+    public void delete(Supply supply) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        session.delete(customer);
+        session.delete(supply);
         tx.commit();
         session.close();
     }
 
-    public Customer findById(Long id) {
+    public Supply findById(Long id) {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Customer customer = session.get(Customer.class, id);
+        Supply supply = session.get(Supply.class, id);
         session.close();
-        return customer;
+        return supply;
     }
 
-    public List<Customer> findAll() {
+    public List<Supply> findAll() {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        List<Customer> list = session.createQuery("from Customer", Customer.class).list();
+        List<Supply> list = session.createQuery("from Supply", Supply.class).list();
         session.close();
         return list;
     }

@@ -4,7 +4,7 @@
  */
 package com.harrypotter.dao;
 
-import com.harrypotter.HibernateUtil;
+import main.HibernateUtil;
 import com.harrypotter.entity.Component;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
