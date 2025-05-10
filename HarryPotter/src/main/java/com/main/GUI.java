@@ -2,10 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package main;
+package com.main;
 
-import com.harrypotter.dao.*;
-import com.harrypotter.entity.*;
+import com.dao.SupplyDAO;
+import com.dao.WandDAO;
+import com.entity.Customer;
+import com.dao.*;
+import com.entity.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -56,12 +59,14 @@ public class GUI extends JFrame {
         getContentPane().add(clearBtn, BorderLayout.SOUTH);
     }
 
-    private void refreshComponentTable(DefaultTableModel model, List<com.harrypotter.entity.Component> list) {
-        model.setRowCount(0);
-        for (com.harrypotter.entity.Component c : list) {
+    private void refreshComponentTable(DefaultTableModel model, List<com.entity.Component> list) {
+    model.setRowCount(0);
+    for (com.entity.Component c : list) {
+        if (c != null) {
             model.addRow(new Object[]{c.getId(), c.getName(), c.getType(), c.getQuantityInStock()});
         }
     }
+}
 
     private JPanel createComponentPanel() {
         ComponentDAO dao = new ComponentDAO();
@@ -88,14 +93,23 @@ public class GUI extends JFrame {
 
         addBtn.addActionListener((ActionEvent e) -> {
             try {
-                com.harrypotter.entity.Component c = new com.harrypotter.entity.Component();
-                c.setName(nameField.getText());
-                c.setType((String) typeBox.getSelectedItem());
-                c.setQuantityInStock(Integer.parseInt(qtyField.getText()));
+                String name = nameField.getText().trim();
+                String type = (String) typeBox.getSelectedItem();
+                String qtyStr = qtyField.getText().trim();
+                if (name.isEmpty() || type == null || qtyStr.isEmpty()) {
+                    JOptionPane.showMessageDialog(panel, "Заполните все поля!", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                int qty = Integer.parseInt(qtyStr);
+                com.entity.Component c = new com.entity.Component();
+                c.setName(name);
+                c.setType(type);
+                c.setQuantityInStock(qty);
                 dao.save(c);
                 refreshComponentTable(model, dao.findAll());
                 nameField.setText("");
                 qtyField.setText("");
+                // Обновить ComboBox в других панелях (палочки, поставки)
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(panel, "Ошибка: " + ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
             }
@@ -106,7 +120,9 @@ public class GUI extends JFrame {
     private void refreshCustomerTable(DefaultTableModel model, List<Customer> list) {
         model.setRowCount(0);
         for (Customer c : list) {
-            model.addRow(new Object[]{c.getId(), c.getName(), c.getContactInfo()});
+            if (c != null) {
+                model.addRow(new Object[]{c.getId(), c.getName(), c.getContactInfo()});
+            }
         }
     }
 
@@ -132,13 +148,20 @@ public class GUI extends JFrame {
 
         addBtn.addActionListener((ActionEvent e) -> {
             try {
+                String name = nameField.getText().trim();
+                String contact = contactField.getText().trim();
+                if (name.isEmpty() || contact.isEmpty()) {
+                    JOptionPane.showMessageDialog(panel, "Заполните все поля!", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 Customer c = new Customer();
-                c.setName(nameField.getText());
-                c.setContactInfo(contactField.getText());
+                c.setName(name);
+                c.setContactInfo(contact);
                 dao.save(c);
                 refreshCustomerTable(model, dao.findAll());
                 nameField.setText("");
                 contactField.setText("");
+                // Обновить ComboBox покупателей в createWandPanel
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(panel, "Ошибка: " + ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
             }
@@ -149,14 +172,16 @@ public class GUI extends JFrame {
     private void refreshWandTable(DefaultTableModel model, List<Wand> list) {
         model.setRowCount(0);
         for (Wand w : list) {
-            model.addRow(new Object[]{
-                    w.getId(),
-                    w.getWood() != null ? w.getWood().getName() : "",
-                    w.getCore() != null ? w.getCore().getName() : "",
-                    w.getDateCreated() != null ? w.getDateCreated().toString() : "",
-                    w.isSold(),
-                    w.getCustomer() != null ? w.getCustomer().getName() : ""
-            });
+            if (w != null) {
+                model.addRow(new Object[]{
+                        w.getId(),
+                        w.getWood() != null ? w.getWood().getName() : "",
+                        w.getCore() != null ? w.getCore().getName() : "",
+                        w.getDateCreated() != null ? w.getDateCreated().toString() : "",
+                        w.isSold(),
+                        w.getCustomer() != null ? w.getCustomer().getName() : ""
+                });
+            }
         }
     }
 
@@ -172,11 +197,14 @@ public class GUI extends JFrame {
         panel.add(new JScrollPane(table), BorderLayout.CENTER);
 
         JPanel form = new JPanel();
-        JComboBox<com.harrypotter.entity.Component> woodBox = new JComboBox<>(componentDAO.findAll().stream().filter(c -> "wood".equals(c.getType())).toArray(com.harrypotter.entity.Component[]::new));
-        JComboBox<com.harrypotter.entity.Component> coreBox = new JComboBox<>(componentDAO.findAll().stream().filter(c -> "core".equals(c.getType())).toArray(com.harrypotter.entity.Component[]::new));
-        JComboBox<Wand> wandBox = new JComboBox<>(wandDAO.findAll().stream().filter(w -> !w.isSold()).toArray(Wand[]::new));
+        JComboBox<com.entity.Component> woodBox = new JComboBox<>();
+        JComboBox<com.entity.Component> coreBox = new JComboBox<>();
+        updateWandBox(woodBox, coreBox, componentDAO);
+        JComboBox<Wand> wandBox = new JComboBox<>();
+        updateWandBox(wandBox, wandDAO);
         wandBox.setSelectedIndex(-1);
-        JComboBox<Customer> customerBox = new JComboBox<>(customerDAO.findAll().toArray(Customer[]::new));
+        JComboBox<Customer> customerBox = new JComboBox<>();
+        updateCustomerBox(customerBox, customerDAO);
         customerBox.setSelectedIndex(-1);
         JButton addBtn = new JButton("Создать палочку");
         form.add(new JLabel("Древесина:"));
@@ -189,30 +217,36 @@ public class GUI extends JFrame {
         woodBox.setRenderer(new DefaultListCellRenderer() {
             @Override
             public java.awt.Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                String text = value instanceof com.harrypotter.entity.Component ? ((com.harrypotter.entity.Component) value).getName() : "";
+                String text = value instanceof com.entity.Component ? ((com.entity.Component) value).getName() : "";
                 return super.getListCellRendererComponent(list, text, index, isSelected, cellHasFocus);
             }
         });
         coreBox.setRenderer(new DefaultListCellRenderer() {
             @Override
             public java.awt.Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                String text = value instanceof com.harrypotter.entity.Component ? ((com.harrypotter.entity.Component) value).getName() : "";
+                String text = value instanceof com.entity.Component ? ((com.entity.Component) value).getName() : "";
                 return super.getListCellRendererComponent(list, text, index, isSelected, cellHasFocus);
             }
         });
 
         addBtn.addActionListener((ActionEvent e) -> {
             try {
+                com.entity.Component wood = (com.entity.Component) woodBox.getSelectedItem();
+                com.entity.Component core = (com.entity.Component) coreBox.getSelectedItem();
+                if (wood == null || core == null) {
+                    JOptionPane.showMessageDialog(panel, "Выберите древесину и сердцевину!", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 Wand w = new Wand();
-                w.setWood((com.harrypotter.entity.Component) woodBox.getSelectedItem());
-                w.setCore((com.harrypotter.entity.Component) coreBox.getSelectedItem());
+                w.setWood(wood);
+                w.setCore(core);
                 w.setDateCreated(LocalDate.now());
                 w.setSold(false);
                 wandDAO.save(w);
                 refreshWandTable(model, wandDAO.findAll());
-                // Обновить woodBox, coreBox, wandBox и customerBox после добавления новой палочки
                 updateWandBox(woodBox, coreBox, componentDAO);
                 updateWandBox(wandBox, wandDAO);
+                updateCustomerBox(customerBox, customerDAO);
                 wandBox.setSelectedIndex(-1);
                 woodBox.setSelectedIndex(-1);
                 coreBox.setSelectedIndex(-1);
@@ -258,27 +292,34 @@ public class GUI extends JFrame {
         return panel;
     }
 
-    private void updateWandBox(JComboBox<com.harrypotter.entity.Component> woodBox, JComboBox<com.harrypotter.entity.Component> coreBox, ComponentDAO componentDAO) {
-        woodBox.setModel(new DefaultComboBoxModel<>(componentDAO.findAll().stream().filter(c -> "wood".equals(c.getType())).toArray(com.harrypotter.entity.Component[]::new)));
-        coreBox.setModel(new DefaultComboBoxModel<>(componentDAO.findAll().stream().filter(c -> "core".equals(c.getType())).toArray(com.harrypotter.entity.Component[]::new)));
+    private void updateWandBox(JComboBox<com.entity.Component> woodBox, JComboBox<com.entity.Component> coreBox, ComponentDAO componentDAO) {
+        woodBox.setModel(new DefaultComboBoxModel<>(componentDAO.findAll().stream().filter(c -> c != null && "wood".equals(c.getType())).toArray(com.entity.Component[]::new)));
+        coreBox.setModel(new DefaultComboBoxModel<>(componentDAO.findAll().stream().filter(c -> c != null && "core".equals(c.getType())).toArray(com.entity.Component[]::new)));
         woodBox.setSelectedIndex(-1);
         coreBox.setSelectedIndex(-1);
     }
 
     private void updateWandBox(JComboBox<Wand> wandBox, WandDAO wandDAO) {
-        wandBox.setModel(new DefaultComboBoxModel<>(wandDAO.findAll().stream().filter(wa -> !wa.isSold()).toArray(Wand[]::new)));
+        wandBox.setModel(new DefaultComboBoxModel<>(wandDAO.findAll().stream().filter(wa -> wa != null && !wa.isSold()).toArray(Wand[]::new)));
         wandBox.setSelectedIndex(-1);
+    }
+
+    private void updateCustomerBox(JComboBox<Customer> customerBox, CustomerDAO customerDAO) {
+        customerBox.setModel(new DefaultComboBoxModel<>(customerDAO.findAll().stream().filter(c -> c != null).toArray(Customer[]::new)));
+        customerBox.setSelectedIndex(-1);
     }
 
     private void refreshSupplyTable(DefaultTableModel model, List<Supply> list) {
         model.setRowCount(0);
         for (Supply s : list) {
-            model.addRow(new Object[]{
-                    s.getId(),
-                    s.getComponent() != null ? s.getComponent().getName() : "",
-                    s.getDate() != null ? s.getDate().toString() : "",
-                    s.getQuantity()
-            });
+            if (s != null) {
+                model.addRow(new Object[]{
+                        s.getId(),
+                        s.getComponent() != null ? s.getComponent().getName() : "",
+                        s.getDate() != null ? s.getDate().toString() : "",
+                        s.getQuantity()
+                });
+            }
         }
     }
 
@@ -293,7 +334,8 @@ public class GUI extends JFrame {
         panel.add(new JScrollPane(table), BorderLayout.CENTER);
 
         JPanel form = new JPanel();
-        JComboBox<com.harrypotter.entity.Component> compBox = new JComboBox<>(componentDAO.findAll().toArray(com.harrypotter.entity.Component[]::new));
+        JComboBox<com.entity.Component> compBox = new JComboBox<>();
+        compBox.setModel(new DefaultComboBoxModel<>(componentDAO.findAll().stream().filter(c -> c != null).toArray(com.entity.Component[]::new)));
         compBox.setSelectedIndex(-1);
         JTextField qtyField = new JTextField(5);
         JButton addBtn = new JButton("Добавить поставку");
@@ -307,20 +349,27 @@ public class GUI extends JFrame {
         compBox.setRenderer(new DefaultListCellRenderer() {
             @Override
             public java.awt.Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                String text = value instanceof com.harrypotter.entity.Component ? ((com.harrypotter.entity.Component) value).getName() : "";
+                String text = value instanceof com.entity.Component ? ((com.entity.Component) value).getName() : "";
                 return super.getListCellRendererComponent(list, text, index, isSelected, cellHasFocus);
             }
         });
 
         addBtn.addActionListener((ActionEvent e) -> {
             try {
+                com.entity.Component comp = (com.entity.Component) compBox.getSelectedItem();
+                String qtyStr = qtyField.getText().trim();
+                if (comp == null || qtyStr.isEmpty()) {
+                    JOptionPane.showMessageDialog(panel, "Выберите компонент и введите количество!", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                int qty = Integer.parseInt(qtyStr);
                 Supply s = new Supply();
-                s.setComponent((com.harrypotter.entity.Component) compBox.getSelectedItem());
+                s.setComponent(comp);
                 s.setDate(LocalDate.now());
-                s.setQuantity(Integer.parseInt(qtyField.getText()));
+                s.setQuantity(qty);
                 supplyDAO.save(s);
                 refreshSupplyTable(model, supplyDAO.findAll());
-                compBox.setModel(new DefaultComboBoxModel<>(componentDAO.findAll().toArray(com.harrypotter.entity.Component[]::new)));
+                compBox.setModel(new DefaultComboBoxModel<>(componentDAO.findAll().stream().filter(c -> c != null).toArray(com.entity.Component[]::new)));
                 compBox.setSelectedIndex(-1);
                 qtyField.setText("");
             } catch (Exception ex) {

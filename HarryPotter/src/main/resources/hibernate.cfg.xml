@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-configuration PUBLIC
         "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
         "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
-<hibernate-configuration>
+<!--<hibernate-configuration>
     <session-factory>
         <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
         <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/harrypotter</property>
@@ -16,4 +16,27 @@
         <mapping class="com.harrypotter.entity.Wand"/>
         <mapping class="com.harrypotter.entity.Supply"/>
     </session-factory>
-</hibernate-configuration> 
+</hibernate-configuration> -->
+
+<hibernate-configuration>
+    <session-factory>
+        <!-- Database connection settings -->
+        <property name="connection.driver_class">org.sqlite.JDBC</property>
+        <property name="connection.url">jdbc:sqlite:harrypotter.db</property>
+        
+        <!-- SQL dialect -->
+        <property name="dialect">com.main.SQLiteDialect</property>
+        
+        <!-- Echo all executed SQL to stdout -->
+        <property name="show_sql">true</property>
+        
+        <!-- Enable automatic schema creation -->
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        
+        <!-- Entity mappings -->
+        <mapping class="com.entity.Component"/>
+        <mapping class="com.entity.Customer"/>
+        <mapping class="com.entity.Supply"/>
+        <mapping class="com.entity.Wand"/>
+    </session-factory>
+</hibernate-configuration>

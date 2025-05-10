@@ -2,10 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.harrypotter.dao;
+package com.dao;
 
-import main.HibernateUtil;
-import com.harrypotter.entity.Component;
+import com.main.HibernateUtil;
+import com.entity.Supply;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -14,41 +14,41 @@ import java.util.List;
  *
  * @author vika
  */
-public class ComponentDAO {
-    public void save(Component component) {
+public class SupplyDAO {
+    public void save(Supply supply) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        session.save(component);
+        session.save(supply);
         tx.commit();
         session.close();
     }
 
-    public void update(Component component) {
+    public void update(Supply supply) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        session.update(component);
+        session.update(supply);
         tx.commit();
         session.close();
     }
 
-    public void delete(Component component) {
+    public void delete(Supply supply) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        session.delete(component);
+        session.delete(supply);
         tx.commit();
         session.close();
     }
 
-    public Component findById(Long id) {
+    public Supply findById(Long id) {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Component component = session.get(Component.class, id);
+        Supply supply = session.get(Supply.class, id);
         session.close();
-        return component;
+        return supply;
     }
 
-    public List<Component> findAll() {
+    public List<Supply> findAll() {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        List<Component> list = session.createQuery("from Component", Component.class).list();
+        List<Supply> list = session.createQuery("from Supply", Supply.class).list();
         session.close();
         return list;
     }

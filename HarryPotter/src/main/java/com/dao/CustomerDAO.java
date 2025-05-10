@@ -2,10 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.harrypotter.dao;
+package com.dao;
 
-import main.HibernateUtil;
-import com.harrypotter.entity.Wand;
+import com.main.HibernateUtil;
+import com.entity.Customer;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -14,41 +14,41 @@ import java.util.List;
  *
  * @author vika
  */
-public class WandDAO {
-    public void save(Wand wand) {
+public class CustomerDAO {
+    public void save(Customer customer) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        session.save(wand);
+        session.save(customer);
         tx.commit();
         session.close();
     }
 
-    public void update(Wand wand) {
+    public void update(Customer customer) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        session.update(wand);
+        session.update(customer);
         tx.commit();
         session.close();
     }
 
-    public void delete(Wand wand) {
+    public void delete(Customer customer) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        session.delete(wand);
+        session.delete(customer);
         tx.commit();
         session.close();
     }
 
-    public Wand findById(Long id) {
+    public Customer findById(Long id) {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Wand wand = session.get(Wand.class, id);
+        Customer customer = session.get(Customer.class, id);
         session.close();
-        return wand;
+        return customer;
     }
 
-    public List<Wand> findAll() {
+    public List<Customer> findAll() {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        List<Wand> list = session.createQuery("from Wand", Wand.class).list();
+        List<Customer> list = session.createQuery("from Customer", Customer.class).list();
         session.close();
         return list;
     }

@@ -18,7 +18,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>gui.GUI</mainClass>
+                  <mainClass>main.GUI</mainClass>
                 </transformer>
               </transformers>
             </configuration>

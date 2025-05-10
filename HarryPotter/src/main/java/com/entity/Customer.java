@@ -1,27 +1,24 @@
-package com.harrypotter.entity;
-
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
+package com.entity;
+
 import javax.persistence.*;
 /**
  *
  * @author vika
  */
 @Entity
-@Table(name = "components")
-public class Component {
+@Table(name = "customers")
+public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String type;
-    @Column(name = "quantity_in_stock")
-    private int quantityInStock;
+    private String contactInfo;
 
-    public Component() {
-    }
+    public Customer() {}
 
     public Long getId() { 
         return id; 
@@ -35,16 +32,10 @@ public class Component {
     public void setName(String name) { 
         this.name = name; 
     }
-    public String getType() { 
-        return type; 
+    public String getContactInfo() { 
+        return contactInfo; 
     }
-    public void setType(String type) { 
-        this.type = type; 
-    }
-    public int getQuantityInStock() { 
-        return quantityInStock; 
-    }
-    public void setQuantityInStock(int quantityInStock) { 
-        this.quantityInStock = quantityInStock; 
+    public void setContactInfo(String contactInfo) { 
+        this.contactInfo = contactInfo; 
     }
 } 

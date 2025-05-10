@@ -2,79 +2,47 @@
 
 ## Развёртывание базы данных
 
-1. Установите PostgreSQL:
-  Windows
-a. Скачивание установщика
-Перейдите на официальный сайт PostgreSQL(https://www.postgresql.org/download/).
+1. Установка SQLite:
+   - Windows:
+     - Скачайте SQLite с официального сайта: https://www.sqlite.org/download.html
+     - Распакуйте архив и добавьте путь к sqlite3.exe в переменную PATH
+   
+   - macOS:
+     ```bash
+     brew install sqlite3
+     ```
+   
+   - Linux:
+     ```bash
+     sudo apt-get update
+     sudo apt-get install sqlite3
+     ```
 
-Выберите версию для Windows и скачайте установщик.
+2. База данных будет создана автоматически при первом запуске приложения в файле `harrypotter.db` в корневой директории проекта.
 
-b. Установка
-Запустите скачанный .exe-файл.
+3. Для просмотра и управления базой данных можно использовать:
+   - DB Browser for SQLite (рекомендуется): https://sqlitebrowser.org/
+   - SQLite Studio: https://sqlitestudio.pl/
+   - Или командную строку sqlite3:
+     ```bash
+     sqlite3 harrypotter.db
+     ```
 
-Выберите компоненты (оставьте всё по умолчанию, включая pgAdmin — графический интерфейс).
+## Запуск приложения
 
-Укажите директорию установки (например, C:\Program Files\PostgreSQL\16).
-
-Пользователя назовите postgres. Задайте пароль для суперпользователя (pipipupu). Запомните его!
-
-Порт оставьте 5432 (если не занят).
-
-Нажмите Next → Next → Finish.
-
-c. Проверка установки
-Откройте pgAdmin из меню «Пуск».
-
-Введите пароль, заданный при установке.
-
-Создайте новую БД:
-
-Правой кнопкой на Databases → Create → Database.
-
-Имя: harrypotter.
-
-Linux 
-a. Установка из репозитория
-Откройте терминал и выполните:
-bash
-sudo apt update
-sudo apt install postgresql postgresql-contrib
-
-b. Запуск сервиса
-bash
-sudo systemctl start postgresql
-sudo systemctl enable postgresql 
-
-c. Настройка пользователя и БД
-Переключитесь на пользователя postgres:
-bash
-sudo -i -u postgres
-
-Создайте БД и пользователя:
-bash
-createdb harrypotter
-psql -c "CREATE USER postgres WITH PASSWORD pipipupu;"
-psql -c "GRANT ALL PRIVILEGES ON DATABASE harrypotter TO postgres;"
-
-d. Проверка
-Подключитесь к БД:
-bash
-psql -h localhost -U postgres -d harrypotter
-Если видите приглашение harrypotter=#, установка успешна.
-
-5. Настройка Hibernate
-Аналогично Windows (см. выше).
-
-
-2. Создайте базу данных:
+1. Убедитесь, что у вас установлена Java 22 или выше
+2. Соберите проект с помощью Maven:
+   ```bash
+   mvn clean package
    ```
-   createdb harrypotter
+3. Запустите приложение:
+   ```bash
+   java -jar target/harrypotter-1.0-SNAPSHOT.jar
    ```
-3. Импортируйте структуру и/или данные:
-   ```
-   psql -U <user> -d harrypotter -f db/harrypotter_dump.sql
-   ```
-   или
-   ```
-   psql -U <user> -d harrypotter -f db/schema.sql
-   ```
+
+## Структура проекта
+
+- `src/main/java/com/entity/` - классы сущностей
+- `src/main/java/com/dao/` - классы для работы с базой данных
+- `src/main/java/com/main/` - основной код приложения
+- `src/main/resources/` - конфигурационные файлы
