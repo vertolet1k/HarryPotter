@@ -1,8 +1,15 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.hp.Lab4;
 
 import java.util.*;
 import java.time.LocalDate;
-
+/**
+ *
+ * @author vika
+ */
 public class InventoryManager implements java.io.Serializable {
     private List<Wand> wands = new ArrayList<>();
     private List<Customer> customers = new ArrayList<>();
@@ -11,7 +18,6 @@ public class InventoryManager implements java.io.Serializable {
     private int customerCounter = 1;
     private int supplyCounter = 1;
 
-    // Добавить новую палочку
     public boolean addWand(String wood, String core) {
         if (getAvailableComponent("wood", wood) <= 0 || getAvailableComponent("core", core) <= 0) {
             return false;
@@ -20,7 +26,6 @@ public class InventoryManager implements java.io.Serializable {
         return true;
     }
 
-    // Продать палочку покупателю
     public boolean sellWand(int wandId, String customerName) {
         for (Wand wand : wands) {
             if (wand.getId() == wandId && !wand.isSold()) {
@@ -32,19 +37,20 @@ public class InventoryManager implements java.io.Serializable {
         return false;
     }
 
-    // Добавить поставку компонента
     public void addSupply(String type, String name, int qty, LocalDate date) {
         supplies.add(new ComponentSupply(supplyCounter++, type, name, qty, date));
     }
 
-    // Получить список всех палочек
-    public List<Wand> getWands() { return wands; }
-    // Получить список покупателей
-    public List<Customer> getCustomers() { return customers; }
-    // Получить список поставок
-    public List<ComponentSupply> getSupplies() { return supplies; }
+    public List<Wand> getWands() { 
+        return wands; 
+    }
+    public List<Customer> getCustomers() { 
+        return customers; 
+    }
+    public List<ComponentSupply> getSupplies() { 
+        return supplies;
+    }
 
-    // Получить доступное количество компонента по типу и названию
     public int getAvailableComponent(String type, String name) {
         int supplied = 0;
         for (ComponentSupply s : supplies) {
@@ -65,7 +71,6 @@ public class InventoryManager implements java.io.Serializable {
         return supplied - used;
     }
 
-    // Очистить все данные
     public void clearAll() {
         wands.clear();
         customers.clear();
@@ -75,7 +80,6 @@ public class InventoryManager implements java.io.Serializable {
         supplyCounter = 1;
     }
 
-    // Получить список всех компонентов с остатками
     public List<Component> getComponentsList() {
         Map<String, Component> map = new LinkedHashMap<>();
         // Считаем поставки

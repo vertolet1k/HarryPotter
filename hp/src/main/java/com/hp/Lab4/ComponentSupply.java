@@ -1,7 +1,14 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.hp.Lab4;
 
 import java.time.LocalDate;
-
+/**
+ *
+ * @author vika
+ */
 public class ComponentSupply implements java.io.Serializable {
     private int id;
     private String componentType; // wood/core
@@ -17,9 +24,19 @@ public class ComponentSupply implements java.io.Serializable {
         this.supplyDate = supplyDate;
     }
 
-    public int getId() { return id; }
-    public String getComponentType() { return componentType; }
-    public String getName() { return name; }
-    public int getQuantity() { return quantity; }
-    public LocalDate getSupplyDate() { return supplyDate; }
+    public int getId() { 
+        return id; 
+    }
+    public String getComponentType() { 
+        return componentType; 
+    }
+    public String getName() { 
+        return name; 
+    }
+    public int getQuantity() { 
+        return quantity; 
+    }
+    public LocalDate getSupplyDate() { 
+        return supplyDate; 
+    }
 } 

@@ -1,10 +1,17 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.hp.Lab4;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.time.LocalDate;
-
+/**
+ *
+ * @author vika
+ */
 public class InventoryGUI extends JFrame {
     private InventoryManager manager;
 
@@ -24,7 +31,7 @@ public class InventoryGUI extends JFrame {
     };
 
     public InventoryGUI(InventoryManager manager) {
-        super("Учетная система магазина волшебных палочек");
+        super("Лавка Оливандера");
         this.manager = manager;
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(600, 400);
