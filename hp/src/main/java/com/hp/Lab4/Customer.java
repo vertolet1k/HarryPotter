@@ -7,7 +7,7 @@ package com.hp.Lab4;
  *
  * @author vika
  */
-public class Customer implements java.io.Serializable {
+public class Customer  {
     private int id;
     private String name;
     private int wandId;

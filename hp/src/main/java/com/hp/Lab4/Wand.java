@@ -7,7 +7,7 @@ package com.hp.Lab4;
  *
  * @author vika
  */
-public class Wand implements java.io.Serializable {
+public class Wand  {
     private int id;
     private String woodType;
     private String coreType;

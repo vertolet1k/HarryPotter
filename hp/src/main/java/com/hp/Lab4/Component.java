@@ -4,12 +4,11 @@
  */
 package com.hp.Lab4;
 
-import java.io.Serializable;
 /**
  *
  * @author vika
  */
-public class Component implements Serializable {
+public class Component  {
     private String type; // wood/core
     private String name;
     private int quantity;

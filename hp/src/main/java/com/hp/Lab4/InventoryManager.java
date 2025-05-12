@@ -10,7 +10,7 @@ import java.time.LocalDate;
  *
  * @author vika
  */
-public class InventoryManager implements java.io.Serializable {
+public class InventoryManager  {
     private List<Wand> wands = new ArrayList<>();
     private List<Customer> customers = new ArrayList<>();
     private List<ComponentSupply> supplies = new ArrayList<>();
