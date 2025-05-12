@@ -8,7 +8,7 @@ package com.hp.Lab4;
  *
  * @author vika
  */
-public class Component  {
+public class Component implements java.io.Serializable {
     private String type; // wood/core
     private String name;
     private int quantity;
