@@ -10,6 +10,13 @@
         <maven.compiler.source>22</maven.compiler.source>
         <maven.compiler.target>22</maven.compiler.target>
     </properties>
+    <dependencies>
+        <dependency>
+        <groupId>org.xerial</groupId>
+        <artifactId>sqlite-jdbc</artifactId>
+        <version>3.43.2.0</version>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>

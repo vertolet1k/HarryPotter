@@ -7,7 +7,7 @@ package com.hp.Lab4;
  *
  * @author vika
  */
-public class Customer  {
+public class Customer {
     private int id;
     private String name;
     private int wandId;

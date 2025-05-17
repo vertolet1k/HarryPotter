@@ -4,92 +4,127 @@
  */
 package com.hp.Lab4;
 
-import java.util.*;
+import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.*;
+
 /**
  *
  * @author vika
  */
-public class InventoryManager  {
-    private List<Wand> wands = new ArrayList<>();
-    private List<Customer> customers = new ArrayList<>();
-    private List<ComponentSupply> supplies = new ArrayList<>();
-    private int wandCounter = 1;
-    private int customerCounter = 1;
-    private int supplyCounter = 1;
+public class InventoryManager {
+    private final WandDAO wandDAO = new WandDAO();
+    private final CustomerDAO customerDAO = new CustomerDAO();
+    private final ComponentSupplyDAO supplyDAO = new ComponentSupplyDAO();
 
     public boolean addWand(String wood, String core) {
         if (getAvailableComponent("wood", wood) <= 0 || getAvailableComponent("core", core) <= 0) {
             return false;
         }
-        wands.add(new Wand(wandCounter++, wood, core));
-        return true;
+        try {
+            wandDAO.addWand(wood, core);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean sellWand(int wandId, String customerName) {
-        for (Wand wand : wands) {
-            if (wand.getId() == wandId && !wand.isSold()) {
-                wand.sellTo(customerName);
-                customers.add(new Customer(customerCounter++, customerName, wandId));
-                return true;
+        try {
+            boolean sold = wandDAO.sellWand(wandId, customerName);
+            if (sold) {
+                customerDAO.addCustomer(customerName, wandId);
             }
+            return sold;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
-    public void addSupply(String type, String name, int qty, LocalDate date) {
-        supplies.add(new ComponentSupply(supplyCounter++, type, name, qty, date));
+    public boolean addSupply(String type, String name, int qty, LocalDate date) {
+        try {
+            supplyDAO.addSupply(type, name, qty, date);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
-    public List<Wand> getWands() { 
-        return wands; 
-    }
-    public List<Customer> getCustomers() { 
-        return customers; 
-    }
-    public List<ComponentSupply> getSupplies() { 
-        return supplies;
+    public List<Wand> getWands() {
+        try {
+            return wandDAO.getAllWands();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        }
     }
 
-    public int getAvailableComponent(String type, String name) {
-        int supplied = 0;
-        for (ComponentSupply s : supplies) {
-            if (s.getComponentType().equalsIgnoreCase(type) && s.getName().equalsIgnoreCase(name)) {
-                supplied += s.getQuantity();
-            }
+    public List<Customer> getCustomers() {
+        try {
+            return customerDAO.getAllCustomers();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return Collections.emptyList();
         }
-        int used = 0;
-        if (type.equalsIgnoreCase("wood")) {
-            for (Wand w : wands) {
-                if (w.getWoodType().equalsIgnoreCase(name)) used++;
-            }
-        } else if (type.equalsIgnoreCase("core")) {
-            for (Wand w : wands) {
-                if (w.getCoreType().equalsIgnoreCase(name)) used++;
-            }
+    }
+
+    public List<ComponentSupply> getSupplies() {
+        try {
+            return supplyDAO.getAllSupplies();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return Collections.emptyList();
         }
-        return supplied - used;
     }
 
     public void clearAll() {
-        wands.clear();
-        customers.clear();
-        supplies.clear();
-        wandCounter = 1;
-        customerCounter = 1;
-        supplyCounter = 1;
+        try {
+            DBManager.getConnection().createStatement().executeUpdate("DELETE FROM wands");
+            DBManager.getConnection().createStatement().executeUpdate("DELETE FROM customers");
+            DBManager.getConnection().createStatement().executeUpdate("DELETE FROM component_supplies");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
+    // Получить доступное количество компонента по типу и названию
+    public int getAvailableComponent(String type, String name) {
+        int supplied = 0;
+        try {
+            for (ComponentSupply s : getSupplies()) {
+                if (s.getComponentType().equalsIgnoreCase(type) && s.getName().equalsIgnoreCase(name)) {
+                    supplied += s.getQuantity();
+                }
+            }
+            int used = 0;
+            if (type.equalsIgnoreCase("wood")) {
+                for (Wand w : getWands()) {
+                    if (w.getWoodType().equalsIgnoreCase(name)) used++;
+                }
+            } else if (type.equalsIgnoreCase("core")) {
+                for (Wand w : getWands()) {
+                    if (w.getCoreType().equalsIgnoreCase(name)) used++;
+                }
+            }
+            return supplied - used;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    // Получить список всех компонентов с остатками
     public List<Component> getComponentsList() {
         Map<String, Component> map = new LinkedHashMap<>();
-        // Считаем поставки
-        for (ComponentSupply s : supplies) {
+        for (ComponentSupply s : getSupplies()) {
             String key = s.getComponentType().toLowerCase() + ":" + s.getName().toLowerCase();
             map.putIfAbsent(key, new Component(s.getComponentType(), s.getName(), 0));
             map.get(key).setQuantity(map.get(key).getQuantity() + s.getQuantity());
         }
-        // Считаем расход на палочки
-        for (Wand w : wands) {
+        for (Wand w : getWands()) {
             String woodKey = "wood:" + w.getWoodType().toLowerCase();
             String coreKey = "core:" + w.getCoreType().toLowerCase();
             if (map.containsKey(woodKey)) {
