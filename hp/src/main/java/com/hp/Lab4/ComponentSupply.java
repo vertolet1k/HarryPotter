@@ -9,7 +9,7 @@ import java.time.LocalDate;
  *
  * @author vika
  */
-public class ComponentSupply implements java.io.Serializable {
+public class ComponentSupply {
     private int id;
     private String componentType; // wood/core
     private String name;

@@ -168,6 +168,10 @@ public class InventoryGUI extends JFrame {
                     name = (String) woodNameBox.getSelectedItem();
                 }
                 int qty = Integer.parseInt(qtyField.getText());
+                if (qty <= 0) {
+                    JOptionPane.showMessageDialog(this, "В минус уйти нельзя!", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 LocalDate date = LocalDate.parse(dateField.getText());
                 manager.addSupply(type, name, qty, date);
                 JOptionPane.showMessageDialog(this, "Поставка добавлена.");
